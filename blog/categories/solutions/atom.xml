@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: solutions | Espresse's blog]]></title>
-  <link href="http://espresse.net/blog/categories/solutions/atom.xml" rel="self"/>
-  <link href="http://espresse.net/"/>
-  <updated>2013-07-25T17:03:33+02:00</updated>
-  <id>http://espresse.net/</id>
+  <link href="http://espresse.github.io/blog/categories/solutions/atom.xml" rel="self"/>
+  <link href="http://espresse.github.io/"/>
+  <updated>2013-07-25T18:08:54+02:00</updated>
+  <id>http://espresse.github.io/</id>
   <author>
     <name><![CDATA[Espresse]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Node.js, Mongoose and two databases]]></title>
-    <link href="http://espresse.net/blog/2013/07/25/node-dot-js-mongoose-and-two-databases/"/>
+    <link href="http://espresse.github.io/blog/2013/07/25/node-dot-js-mongoose-and-two-databases/"/>
     <updated>2013-07-25T19:06:00+02:00</updated>
-    <id>http://espresse.net/blog/2013/07/25/node-dot-js-mongoose-and-two-databases</id>
+    <id>http://espresse.github.io/blog/2013/07/25/node-dot-js-mongoose-and-two-databases</id>
     <content type="html"><![CDATA[<p>Developing one of my last applications, written in Node.js paired with MongoDB (with <a href="http://mongoosejs.com">Mongoose</a> as ODM), we&rsquo;ve reached the point when we had to call another database (stored on different machine with different database name). Basicaly, what we wanted was to log users' action in other place than our main database.</p>
 
 <!-- more -->
