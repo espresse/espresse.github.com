@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: solutions | Espresse's blog]]></title>
+  <link href="http://espresse.net/blog/categories/solutions/atom.xml" rel="self"/>
+  <link href="http://espresse.net/"/>
+  <updated>2013-07-25T17:03:33+02:00</updated>
+  <id>http://espresse.net/</id>
+  <author>
+    <name><![CDATA[Espresse]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Node.js, Mongoose and two databases]]></title>
+    <link href="http://espresse.net/blog/2013/07/25/node-dot-js-mongoose-and-two-databases/"/>
+    <updated>2013-07-25T19:06:00+02:00</updated>
+    <id>http://espresse.net/blog/2013/07/25/node-dot-js-mongoose-and-two-databases</id>
+    <content type="html"><![CDATA[<p>Developing one of my last applications, written in Node.js paired with MongoDB (with <a href="http://mongoosejs.com">Mongoose</a> as ODM), we&rsquo;ve reached the point when we had to call another database (stored on different machine with different database name). Basicaly, what we wanted was to log users' action in other place than our main database.</p>
+
+<!-- more -->
+
+
+<p>Finding right solution took me some time but overall it was quite simple. What I had to do was to add another connection to exisitng one and export it to make it visible for our Log model.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (database.js)</span> <a href='/downloads/code/database.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// database.js</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">db</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongoose&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;mongodb://localhost/main&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">db_with_logs</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">createConnection</span><span class="p">(</span><span class="s1">&#39;mongodb://some_other_host/logger&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">exports</span><span class="p">.</span><span class="nx">db</span> <span class="o">=</span> <span class="nx">db</span><span class="p">;</span>
+</span><span class='line'><span class="nx">exports</span><span class="p">.</span><span class="nx">db_with_logs</span> <span class="o">=</span> <span class="nx">db_with_logs</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>It&rsquo;s worth mentioning that connection created with <code>createConnection</code> is not the same as those created with <code>connect</code>. So our new model needed to be coded in a slightly different way.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span> (log.js)</span> <a href='/downloads/code/log.js'>download</a></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="c1">// log.js</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">mongoose</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;mongoose&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">connection</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./database&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">Schema</span> <span class="o">=</span> <span class="nx">mongoose</span><span class="p">.</span><span class="nx">Schema</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">Log</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Schema</span><span class="p">(</span>
+</span><span class='line'>  <span class="c1">// some fields</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">connection</span><span class="p">.</span><span class="nx">model</span><span class="p">(</span><span class="s1">&#39;Log&#39;</span><span class="p">,</span> <span class="nx">Log</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>
